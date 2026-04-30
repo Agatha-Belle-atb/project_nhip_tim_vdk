@@ -1,0 +1,91 @@
+# ESP32 MAX30102 Data Sensor Project
+
+## Mô tả dự án
+
+Dự án này sử dụng ESP32 để thu thập dữ liệu từ cảm biến MAX30102, một cảm biến nhịp tim và nồng độ oxy trong máu. Code chính đọc giá trị hồng ngoại (IR) và đỏ (Red) từ cảm biến ở tần suất 50Hz và gửi qua Serial. Ngoài ra, dự án hỗ trợ điều chỉnh độ sáng LED của cảm biến thông qua lệnh từ máy tính.
+
+Dự án cũng bao gồm thư viện DS3231 (RTC - Real-Time Clock) và các file test để đo nhịp tim, SPO2 và thời gian thực.
+
+## Tính năng
+
+- **Thu thập dữ liệu thời gian thực**: Đọc giá trị IR và Red từ MAX30102 ở 50Hz.
+- **Điều khiển độ sáng LED**: Nhận lệnh từ Serial để điều chỉnh độ sáng LED (0-255).
+- **Tương thích với PlatformIO**: Sử dụng framework Arduino trên ESP32.
+- **Test code**: Bao gồm các phiên bản test để đo nhịp tim và SPO2 kết hợp với thời gian từ DS3231.
+
+## Yêu cầu phần cứng
+
+- ESP32 (sử dụng board esp32doit-devkit-v1)
+- Cảm biến MAX30102
+- (Tùy chọn) Module DS3231 RTC cho các chức năng thời gian
+- Kết nối I2C: SDA và SCL
+
+## Cài đặt
+
+1. **Cài đặt PlatformIO**: Đảm bảo bạn đã cài đặt PlatformIO trong VS Code hoặc CLI.
+
+2. **Clone hoặc tải dự án**: Sao chép dự án vào thư mục làm việc.
+
+3. **Cấu hình PlatformIO**:
+   - Mở `platformio.ini` và kiểm tra cấu hình:
+     ```ini
+     [env:esp32doit-devkit-v1]
+     platform = espressif32
+     board = esp32doit-devkit-v1
+     framework = arduino
+     upload_port = COM3  ; Thay đổi nếu cần
+     monitor_speed = 115200
+     ```
+
+4. **Cài đặt thư viện**:
+   - Thư viện DFRobot_MAX30102 và DS3231 đã được bao gồm trong thư mục `lib/`.
+   - Nếu cần, PlatformIO sẽ tự động tải các dependencies khác.
+
+5. **Upload code**:
+   - Sử dụng PlatformIO để build và upload code lên ESP32.
+
+## Cách sử dụng
+
+### Code chính (src/main.cpp)
+
+1. **Khởi động**: ESP32 sẽ khởi động cảm biến MAX30102 với cấu hình mặc định.
+2. **Thu thập dữ liệu**: Code sẽ đọc và in giá trị IR và Red qua Serial ở định dạng `IR,Red`.
+3. **Điều khiển độ sáng**:
+   - Gửi số từ 0 đến 255 qua Serial (kết thúc bằng Enter).
+   - Ví dụ: Gửi "100" để đặt độ sáng LED thành 100.
+
+### Test code (test/code_v11.cpp)
+
+- Đo nhịp tim và SPO2 kết hợp với thời gian từ DS3231.
+- In ra Serial ở định dạng: `HH:MM:SS - Nhịp tim: X | SPO2: Y`
+
+## Cấu hình cảm biến
+
+Trong `setup()`, cảm biến được cấu hình với:
+
+- Độ sáng LED: 60
+- Trung bình mẫu: 4
+- Chế độ: Multiled (IR + Red)
+- Tần suất mẫu: 50Hz
+- Độ rộng xung: 411μs
+- Phạm vi ADC: 16384
+
+## Dependencies
+
+- **DFRobot_MAX30102**: Thư viện cho cảm biến MAX30102.
+- **DS3231**: Thư viện cho RTC DS3231 (sử dụng RTClib).
+- **Wire**: Thư viện I2C của Arduino.
+
+## Lưu ý
+
+- Đảm bảo kết nối I2C đúng: SDA và SCL của ESP32 với cảm biến.
+- Tốc độ Serial: 115200 baud.
+- Code được tối ưu để đọc cảm biến ở 50Hz mà không bị gián đoạn.
+
+## License
+
+Dự án này sử dụng các thư viện mã nguồn mở. Kiểm tra license của từng thư viện trong thư mục `lib/`.
+
+## Liên hệ
+
+Nếu có câu hỏi, vui lòng kiểm tra code và tài liệu của thư viện.
